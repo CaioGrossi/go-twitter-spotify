@@ -35,19 +35,19 @@ func connectTwitterHttpStream(client http.Client) {
 		Tweet Tweet
 	}
 
-	foo := new(Message);
+	tweet := new(Message);
 
 	decoder := json.NewDecoder(resp.Body)
 
 	for {
-		err := decoder.Decode(&foo)
+		err := decoder.Decode(&tweet)
 
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		fmt.Println(foo.Tweet.Text)
+		fmt.Println(tweet.Tweet.Text)
 
-		addTrackToPlaylist(client, foo.Tweet.Text)
+		addTrackToPlaylist(client, tweet.Tweet.Text)
 	}
 }
