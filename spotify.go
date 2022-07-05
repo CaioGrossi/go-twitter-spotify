@@ -24,13 +24,13 @@ func authenticateSpotifyApi(client http.Client) (string) {
 	}
 
 	if err != nil {
-		fmt.Printf("Error getting spotify token: %s\n", err)
+		fmt.Printf("Error creating request to spotify authentication: %s\n", err)
 	}
 
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Printf("Error getting spotify token: %s\n", err)
+		fmt.Printf("Error getting spotify auth token: %s\n", err)
 	}
 
 	defer resp.Body.Close()
@@ -38,7 +38,7 @@ func authenticateSpotifyApi(client http.Client) (string) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error reading response spotify auth token: %s\n", err)
 	}
 
 	type AuthReturn struct {
@@ -50,7 +50,7 @@ func authenticateSpotifyApi(client http.Client) (string) {
 	jsonErr := json.Unmarshal(body, &authReturn)
 
 	if jsonErr != nil {
-		fmt.Println(err)
+		fmt.Printf("Error unmarshalling response spotify auth token: %s\n", err)
 	}
 
 	return authReturn.AccessToken
@@ -73,7 +73,7 @@ func searchTrackAtSpotifyApi(client http.Client, track string, authToken string)
 	req , err := http.NewRequest("GET", "https://api.spotify.com/v1/search?type=track&q=" + strings.Replace(track, " ", "+", -1), nil)
 
 	if err != nil {
-		fmt.Printf("Error getting track: %s\n", err)
+		fmt.Printf("Error creating request to search track: %s\n", err)
 	}
 
 	req.Header = http.Header{
@@ -83,7 +83,7 @@ func searchTrackAtSpotifyApi(client http.Client, track string, authToken string)
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Printf("Error getting spotify token: %s\n", err)
+		fmt.Printf("Error getting spotify track: %s\n", err)
 	}
 
 	defer resp.Body.Close()
@@ -91,7 +91,7 @@ func searchTrackAtSpotifyApi(client http.Client, track string, authToken string)
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error reading response spotify track: %s\n", err)
 	}
 
 	searchReturn := SearchReturn{}
@@ -99,7 +99,7 @@ func searchTrackAtSpotifyApi(client http.Client, track string, authToken string)
 	jsonErr := json.Unmarshal(body, &searchReturn)
 
 	if jsonErr != nil {
-		fmt.Println(err)
+		fmt.Printf("Error unmarshalling response spotify search: %s\n", err)
 	}
 
 	if len(searchReturn.Tracks.Items) > 0 {
@@ -128,7 +128,7 @@ func addTrackToPlaylist(client http.Client, track string) bool {
 	req, err := http.NewRequest("POST", "https://api.spotify.com/v1/playlists/60VbGsXUSdOTM2txWPFiFe/tracks", bytes.NewBuffer(trackData))
 
 	if err != nil {
-		fmt.Printf("Error getting track: %s\n", err)
+		fmt.Printf("Error creating request to add track to playlist: %s\n", err)
 	}
 
 	req.Header = http.Header{
@@ -138,7 +138,7 @@ func addTrackToPlaylist(client http.Client, track string) bool {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Printf("Error getting spotify token: %s\n", err)
+		fmt.Printf("Error adding track to playlist %s\n", err)
 	}
 
 	if resp.StatusCode != 201 {
